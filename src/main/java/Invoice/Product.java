@@ -1,4 +1,4 @@
-package Invoice;
+package invoice;
 
 public class Product {
 
@@ -6,8 +6,15 @@ public class Product {
     private double price;
 
     public Product (String name, double price) {
-        this.name = name;
-        this.price = price;
+        if (Login.isAuthenticated () && Login.isAuthorized ("product")) {
+            this.name = name;
+            this.price = price;
+        }
+        else {
+            this.name = "Unauthorized to create product data";
+            this.price = 0.0;
+            Logging.printLog ("Product:Product - User is not allowed to create product");
+        }
     }
 
     public String getName() {
@@ -15,6 +22,12 @@ public class Product {
     }
 
     public double getPrice() {
-        return price;
+        if (Login.isActive () && Login.isAuthorized ("product")) {
+            return price;
+        }
+        else {
+            Logging.printLog ("Product:getPrice - User is not allowed to request the price of a product");
+            return -1.0;
+        }
     }
 }

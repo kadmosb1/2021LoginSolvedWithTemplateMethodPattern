@@ -3,47 +3,31 @@ package login;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Login {
+public class Authentication {
 
     private static final Scanner scanner = new Scanner (System.in);
-    private static Login singleton;
+    private static Authentication singleton;
     private ArrayList<User> users;
     private ArrayList<Role> roles;
 
-    private Login () {
+    private Authentication() {
 
         users = new ArrayList<> ();
-        User user1 = new User("user1", "1");
-        User user2 = new User("user2", "2");
-        User user3 = new User("user3", "3");
-        users.add (user1);
-        users.add (user2);
-        users.add (user3);
-
-        roles = new ArrayList<> ();
-        Role role1 = new Role("customer");
-        Role role2 = new Role("invoice");
-        Role role3 = new Role("product");
-        role1.addUser (user1);
-        role2.addUser (user2);
-        role3.addUser (user1);
-        role3.addUser (user2);
-        role3.addUser (user3);
-        roles.add (role1);
-        roles.add (role2);
-        roles.add (role3);
+        users.add (new User("user1", "1"));
+        users.add (new User("user2", "2"));
+        users.add (new User("user3", "3"));
     }
 
-    public static Login getInstance () {
+    public static Authentication getInstance () {
 
         if (singleton == null) {
-            singleton = new Login ();
+            singleton = new Authentication();
         }
 
         return singleton;
     }
 
-    private User getUser (String userName) {
+    protected User getUser (String userName) {
 
         for (User user : users) {
 
@@ -231,26 +215,8 @@ public class Login {
         return authenticate (userName, null);
     }
 
-    private Role getRole (String roleName) {
-
-        for (Role role : roles) {
-
-            if (role.getName ().equals (roleName)) {
-                return role;
-            }
-        }
-
-        return null;
-    }
-
-    public boolean authorize (String roleName) {
-
-        User user = getActiveUser ();
-        Role role = getRole (roleName);
-        return (role != null) && (role.userIsInRole(user));
-    }
-
     public void logout () {
+
         User user = getActiveUser ();
 
         if (user != null) {
