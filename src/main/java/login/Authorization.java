@@ -17,13 +17,15 @@ public class Authorization {
 
         Role role1 = new Role("customer");
         role1.addUser (authentication.getUser ("user1"));
+        role1.addUser (authentication.getUser ("user3"));
         roles.add (role1);
 
-        Role role2 = new Role("invoice");
+        Role role2 = new Role("product");
         role2.addUser (authentication.getUser ("user2"));
+        role2.addUser (authentication.getUser ("user3"));
         roles.add (role2);
 
-        Role role3 = new Role("product");
+        Role role3 = new Role("invoice");
         role3.addUser (authentication.getUser ("user1"));
         role3.addUser (authentication.getUser ("user2"));
         role3.addUser (authentication.getUser ("user3"));

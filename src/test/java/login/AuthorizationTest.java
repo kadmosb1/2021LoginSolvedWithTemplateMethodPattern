@@ -21,22 +21,22 @@ class AuthorizationTest {
 
         authentication.authenticate ("user1", "1");
         assertFalse (authorization.isAuthorized("product"));
-        assertTrue (login.isAuthorized("customer"));
-        assertTrue (login.isAuthorized("invoice"));
+        assertTrue (authorization.isAuthorized("customer"));
+        assertTrue (authorization.isAuthorized("invoice"));
 
-        login.authenticate ("user2", "2");
-        assertTrue (login.isAuthorized("product"));
-        assertFalse (login.isAuthorized("customer"));
-        assertTrue (login.isAuthorized("invoice"));
+        authentication.authenticate ("user2", "2");
+        assertTrue (authorization.isAuthorized("product"));
+        assertFalse (authorization.isAuthorized("customer"));
+        assertTrue (authorization.isAuthorized("invoice"));
 
-        login.authenticate ("user3", "3");
-        assertTrue (login.isAuthorized("product"));
-        assertTrue (login.isAuthorized("customer"));
-        assertTrue (login.isAuthorized("invoice"));
+        authentication.authenticate ("user3", "3");
+        assertTrue (authorization.isAuthorized("product"));
+        assertTrue (authorization.isAuthorized("customer"));
+        assertTrue (authorization.isAuthorized("invoice"));
 
-        login.logout ();
-        assertFalse (login.isAuthorized("invoice"));
-        assertFalse (login.isAuthorized("customer"));
-        assertFalse (login.isAuthorized("product"));
+        authentication.logout ();
+        assertFalse (authorization.isAuthorized("invoice"));
+        assertFalse (authorization.isAuthorized("customer"));
+        assertFalse (authorization.isAuthorized("product"));
     }
 }
