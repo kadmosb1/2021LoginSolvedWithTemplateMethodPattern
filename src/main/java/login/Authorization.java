@@ -10,9 +10,9 @@ public class Authorization {
     private ArrayList<Role> roles;
     private Authentication authentication;
 
-    private Authorization() {
+    private Authorization () {
 
-        authentication = Authentication.getInstance ();
+        authentication = AuthenticationSimple.getInstance ();
         roles = new ArrayList<> ();
 
         Role role1 = new Role("customer");

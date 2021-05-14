@@ -12,7 +12,7 @@ class AuthorizationTest {
 
     @BeforeAll
     public static void init () {
-        authentication = Authentication.getInstance ();
+        authentication = AuthenticationNormal.getInstance ();
         authorization = Authorization.getInstance ();
     }
 

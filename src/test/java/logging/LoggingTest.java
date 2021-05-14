@@ -1,6 +1,7 @@
 package logging;
 
 import login.Authentication;
+import login.AuthenticationNormal;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +10,8 @@ class LoggingTest {
 
     @Test
     public void loggingTest () {
-        Authentication login = Authentication.getInstance ();
+
+        Authentication login = AuthenticationNormal.getInstance ();
         login.logout ();
         Logging logging = Logging.getInstance ();
 

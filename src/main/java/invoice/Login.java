@@ -3,11 +3,11 @@ package invoice;
 public class Login {
 
     public static boolean isActive () {
-        return login.Authentication.getInstance ().userIsActive ();
+        return login.AuthenticationSimple.getInstance ().userIsAuthenticated ();
     }
 
     public static boolean isAuthenticated () {
-        return login.Authentication.getInstance ().userIsAuthenticated ();
+        return login.AuthenticationNormal.getInstance ().userIsAuthenticated ();
     }
 
     public static boolean isAuthorized (String roleName) {

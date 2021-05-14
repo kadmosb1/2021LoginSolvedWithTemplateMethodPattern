@@ -17,6 +17,10 @@ public class InvoiceFormatter {
      */
     public static String getLine (boolean rightAligned, String line, Object... args) {
 
+        if (line == null) {
+            line = "";
+        }
+
         // formatters (%s, %d etc.) in line worden vervangen door de elementen van args.
         line = String.format (line, args);
 
