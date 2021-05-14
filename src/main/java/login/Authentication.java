@@ -1,5 +1,7 @@
 package login;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -7,13 +9,37 @@ public abstract class Authentication {
 
     private static final Scanner scanner = new Scanner (System.in);
     protected static Authentication singleton;
-    protected ArrayList<User> users;
+    private ArrayList<User> users;
 
     protected Authentication() {
         users = new ArrayList<>();
         users.add (new User ("user1", "1"));
         users.add (new User ("user2", "2"));
         users.add (new User ("user3", "3"));
+    }
+
+    protected ArrayList<User> getUsers () {
+        return users;
+    }
+
+    protected void setUsers (ArrayList<User> users) {
+        this.users = users;
+    }
+
+    protected static Authentication getInstance (Authentication newAuthentication) {
+
+        if (singleton == null) {
+            singleton = newAuthentication;
+        }
+        // Als wordt gewisseld tussen eenvoudige en normale authenticatie, moet de lijst met gebruikers
+        // (inclusief de actieve of ingelogde gebruiker in die lijst) worden bewaard.
+        else if (!singleton.getClass ().getName ().equals (newAuthentication.getClass ().getName ())) {
+            ArrayList<User> activeUsers = singleton.getUsers ();
+            singleton = newAuthentication;
+            singleton.setUsers (activeUsers);
+        }
+
+        return singleton;
     }
 
     protected User getUser (String userName) {
@@ -79,6 +105,16 @@ public abstract class Authentication {
     }
 
     protected abstract User getAuthenticatedUser ();
-    public abstract boolean userIsAuthenticated ();
+    protected abstract boolean authenticate ();
     public abstract boolean authenticate (String userName, String... password);
+
+    public boolean userIsAuthenticated () {
+
+        if (getAuthenticatedUser () != null) {
+            return true;
+        }
+        else {
+            return authenticate ();
+        }
+    }
 }

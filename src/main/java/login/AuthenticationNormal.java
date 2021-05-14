@@ -2,6 +2,7 @@ package login;
 
 import logging.Logging;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,21 +14,8 @@ public class AuthenticationNormal extends Authentication {
         super ();
     }
 
-    private AuthenticationNormal (ArrayList<User> users) {
-        this.users = users;
-    }
-
     public static Authentication getInstance () {
-
-        if (singleton == null) {
-            singleton = new AuthenticationNormal ();
-        }
-        else if (singleton.getClass () != AuthenticationNormal.class) {
-            ArrayList<User> users = singleton.users;
-            singleton = new AuthenticationNormal (users);
-        }
-
-        return singleton;
+        return getInstance (new AuthenticationNormal ());
     }
 
     @Override
@@ -43,7 +31,8 @@ public class AuthenticationNormal extends Authentication {
         }
     }
 
-    private boolean authenticate () {
+    @Override
+    protected boolean authenticate () {
 
         User activeUser = getActiveUser ();
 
@@ -76,16 +65,7 @@ public class AuthenticationNormal extends Authentication {
         return false;
     }
 
-    public boolean userIsAuthenticated () {
-
-        if (getAuthenticatedUser () != null) {
-            return true;
-        }
-        else {
-            return authenticate ();
-        }
-    }
-
+    @Override
     public boolean authenticate (String userName, String... password) {
 
         User user = getAuthenticatedUser ();

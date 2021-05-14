@@ -11,28 +11,17 @@ public class AuthenticationSimple extends Authentication {
         super ();
     }
 
-    private AuthenticationSimple (ArrayList<User> users) {
-        this.users = users;
-    }
-
     public static Authentication getInstance () {
-
-        if (singleton == null) {
-            singleton = new AuthenticationSimple ();
-        }
-        else if (singleton.getClass () != AuthenticationSimple.class) {
-            ArrayList<User> users = singleton.users;
-            singleton = new AuthenticationSimple (users);
-        }
-
-        return singleton;
+        return getInstance (new AuthenticationSimple ());
     }
 
+    @Override
     public User getAuthenticatedUser () {
         return getActiveUser ();
     }
 
-    private boolean authenticate () {
+    @Override
+    protected boolean authenticate () {
 
         for (int i = 0; i < 3; i++) {
 
@@ -50,16 +39,7 @@ public class AuthenticationSimple extends Authentication {
         return false;
     }
 
-    public boolean userIsAuthenticated () {
-
-        if (getAuthenticatedUser () != null) {
-            return true;
-        }
-        else {
-            return authenticate ();
-        }
-    }
-
+    @Override
     public boolean authenticate (String userName, String... password) {
 
         User user = getAuthenticatedUser ();
