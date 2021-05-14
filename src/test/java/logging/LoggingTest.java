@@ -1,6 +1,7 @@
 package logging;
 
-import login.Login;
+import login.Authentication;
+import login.AuthenticationNormal;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,14 +10,15 @@ class LoggingTest {
 
     @Test
     public void loggingTest () {
-        Login login = Login.getInstance ();
+
+        Authentication login = AuthenticationNormal.getInstance ();
         login.logout ();
         Logging logging = Logging.getInstance ();
 
         String actualLogString = logging.getLogString ("test");
         String expectedLogString = "";
 
-        if (logging.logFileExists()) {
+        if (!logging.logFileExists()) {
             expectedLogString = String.format ("%-19s %-20s %s%n", "Date", "Gebruikersnaam", "Logging");
         }
 
@@ -27,7 +29,7 @@ class LoggingTest {
         actualLogString = logging.getLogString ("test");
         expectedLogString = "";
 
-        if (logging.logFileExists()) {
+        if (!logging.logFileExists()) {
             expectedLogString = String.format ("%-19s %-20s %s%n", "Date", "Gebruikersnaam", "Logging");
         }
 

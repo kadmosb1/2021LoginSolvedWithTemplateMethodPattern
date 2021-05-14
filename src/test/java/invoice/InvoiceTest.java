@@ -1,7 +1,8 @@
-package Invoice;
+package invoice;
 
+import login.Authentication;
+import login.AuthenticationNormal;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ class InvoiceTest {
 
     @BeforeAll
     public static void init () {
+        AuthenticationNormal.getInstance ().authenticate ("user3", "3");
         customer = new Customer("Testklant", "Teststraat 15", "2282 CD", "DELFT");
         lines = new ArrayList<> ();
         lines.add (new InvoiceLine(2, new Product("Testproduct 1", 22.0)));

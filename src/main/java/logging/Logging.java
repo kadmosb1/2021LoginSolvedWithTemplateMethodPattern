@@ -1,6 +1,7 @@
 package logging;
 
-import login.Login;
+import login.Authentication;
+import login.AuthenticationSimple;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,12 +49,12 @@ public class Logging {
         String header = "";
         setLogFilename ();
 
-        if (logFileExists()) {
+        if (!logFileExists()) {
             header = String.format ("%-19s %-20s %s%n", "Date", "Gebruikersnaam", "Logging");
         }
 
         String pre = String.format ("%-19s ", getFormattedDateAndTime());
-        pre += String.format ("%-20s ", Login.getInstance ().getUserNameOfActiveUser ());
+        pre += String.format ("%-20s ", AuthenticationSimple.getInstance ().getUserNameOfActiveUser ());
 
         return String.format ("%s%s%s%n", header, pre, message);
     }
