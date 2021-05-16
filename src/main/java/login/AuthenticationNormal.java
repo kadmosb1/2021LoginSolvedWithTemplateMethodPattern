@@ -2,24 +2,41 @@ package login;
 
 import logging.Logging;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Scanner;
-
+/*
+ * Bij normale authenticatie wordt bij inloggen gevraagd om gebruikersnaam en password.
+ */
 public class AuthenticationNormal extends Authentication {
 
-    private static final Scanner scanner = new Scanner (System.in);
+    private static AuthenticationNormal singleton;
 
     private AuthenticationNormal () {
         super ();
     }
 
-    public static Authentication getInstance () {
-        return getInstance (new AuthenticationNormal ());
+    /*
+     * Implementatie van getInstance die nodig is om het Singleton Pattern toe te passen.
+     */
+    protected static Authentication getNewInstance () {
+
+        if (singleton == null) {
+            singleton = new AuthenticationNormal();
+        }
+
+        return singleton;
     }
 
+    /*
+     * Het aanmaken van een eventuele singleton verloopt via Authentication.
+     */
+    public static Authentication getInstance () {
+        return getInstance (AuthenticationNormal.class);
+    }
+
+    /*
+     * De ingelogde gebruiker wordt opgezocht (als die er is).
+     */
     @Override
-    public User getAuthenticatedUser () {
+    protected User getAuthenticatedUser () {
 
         User user = getActiveUser();
 
@@ -31,9 +48,14 @@ public class AuthenticationNormal extends Authentication {
         }
     }
 
+    /*
+     * Als er nog geen gebruiker is ingelogd, kan een nieuwe gebruiker inloggen.
+     */
     @Override
     protected boolean authenticate () {
 
+        // Als er al een gebruiker actief is (die nog niet is ingelogd), hoeft deze alleen nog een password in te
+        // voeren.
         User activeUser = getActiveUser ();
 
         if ((activeUser != null) && activeUser.isAuthenticated ()) {
@@ -65,31 +87,19 @@ public class AuthenticationNormal extends Authentication {
         return false;
     }
 
-    @Override
-    public boolean authenticate (String userName, String... password) {
+    /*
+     * Een gebruiker kan direct (zonder toetsenbord) worden ingelegd met gebruikersnaam en password.
+     */
+    protected boolean authenticate (User user, String... password) {
 
-        User user = getAuthenticatedUser ();
-
-        if ((user != null) && (user.getUserName ().equals (userName))) {
+        // Als het password van de nieuwe gebruiker klopt, wordt hij ingelogd. Anders kan hij met een ander (het
+        // correcte) password inloggen.
+        if ((password.length == 1) && user.authenticate (password [0])) {
             return true;
         }
-
-        user = getUser (userName);
-
-        if (user == null) {
-            return false;
-        }
         else {
-
-            logout ();
-
-            if ((password.length == 1) && user.authenticate (password [0])) {
-                return true;
-            }
-            else {
-                user.setActive ();
-                return authenticate ();
-            }
+            user.setActive ();
+            return authenticate ();
         }
     }
 }

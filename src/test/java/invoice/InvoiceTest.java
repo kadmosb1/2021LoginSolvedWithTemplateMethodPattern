@@ -66,6 +66,8 @@ class InvoiceTest {
 
     @Test
     void getInvoiceString() {
+
+        // Zowel voor een kleine als voor een normale ondernemer wordt gecontroleerd of de factuur klopt.
         String expectedInvoice = getExpectedSmallInvoice ();
         String actualInvoice = smallInvoice.getInvoiceString (customer, lines);
         assertEquals (expectedInvoice, actualInvoice);
