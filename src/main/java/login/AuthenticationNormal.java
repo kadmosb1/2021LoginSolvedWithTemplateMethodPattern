@@ -2,36 +2,41 @@ package login;
 
 import logging.Logging;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
+/*
+ * Bij normale authenticatie wordt bij inloggen gevraagd om gebruikersnaam en password.
+ */
 public class AuthenticationNormal extends Authentication {
 
-    private static final Scanner scanner = new Scanner (System.in);
+    private static AuthenticationNormal singleton;
 
     private AuthenticationNormal () {
         super ();
     }
 
-    private AuthenticationNormal (ArrayList<User> users) {
-        this.users = users;
-    }
-
-    public static Authentication getInstance () {
+    /*
+     * Implementatie van getInstance die nodig is om het Singleton Pattern toe te passen.
+     */
+    protected static Authentication getNewInstance () {
 
         if (singleton == null) {
-            singleton = new AuthenticationNormal ();
-        }
-        else if (singleton.getClass () != AuthenticationNormal.class) {
-            ArrayList<User> users = singleton.users;
-            singleton = new AuthenticationNormal (users);
+            singleton = new AuthenticationNormal();
         }
 
         return singleton;
     }
 
+    /*
+     * Het aanmaken van een eventuele singleton verloopt via Authentication.
+     */
+    public static Authentication getInstance () {
+        return getInstance (AuthenticationNormal.class);
+    }
+
+    /*
+     * De ingelogde gebruiker wordt opgezocht (als die er is).
+     */
     @Override
-    public User getAuthenticatedUser () {
+    protected User getAuthenticatedUser () {
 
         User user = getActiveUser();
 
@@ -43,8 +48,14 @@ public class AuthenticationNormal extends Authentication {
         }
     }
 
-    private boolean authenticate () {
+    /*
+     * Als er nog geen gebruiker is ingelogd, kan een nieuwe gebruiker inloggen.
+     */
+    @Override
+    protected boolean authenticate () {
 
+        // Als er al een gebruiker actief is (die nog niet is ingelogd), hoeft deze alleen nog een password in te
+        // voeren.
         User activeUser = getActiveUser ();
 
         if ((activeUser != null) && activeUser.isAuthenticated ()) {
@@ -76,40 +87,19 @@ public class AuthenticationNormal extends Authentication {
         return false;
     }
 
-    public boolean userIsAuthenticated () {
+    /*
+     * Een gebruiker kan direct (zonder toetsenbord) worden ingelegd met gebruikersnaam en password.
+     */
+    protected boolean authenticate (User user, String... password) {
 
-        if (getAuthenticatedUser () != null) {
+        // Als het password van de nieuwe gebruiker klopt, wordt hij ingelogd. Anders kan hij met een ander (het
+        // correcte) password inloggen.
+        if ((password.length == 1) && user.authenticate (password [0])) {
             return true;
         }
         else {
+            user.setActive ();
             return authenticate ();
-        }
-    }
-
-    public boolean authenticate (String userName, String... password) {
-
-        User user = getAuthenticatedUser ();
-
-        if ((user != null) && (user.getUserName ().equals (userName))) {
-            return true;
-        }
-
-        user = getUser (userName);
-
-        if (user == null) {
-            return false;
-        }
-        else {
-
-            logout ();
-
-            if ((password.length == 1) && user.authenticate (password [0])) {
-                return true;
-            }
-            else {
-                user.setActive ();
-                return authenticate ();
-            }
         }
     }
 }

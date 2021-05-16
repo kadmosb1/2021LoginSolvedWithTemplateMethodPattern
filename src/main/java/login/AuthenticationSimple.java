@@ -1,88 +1,84 @@
 package login;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import logging.Logging;
 
+/*
+ * Bij eenvoudige authenticatie volstaat een gebruikersnaam voor inloggen.
+ */
 public class AuthenticationSimple extends Authentication {
 
-    private static final Scanner scanner = new Scanner (System.in);
+    private static AuthenticationSimple singleton;
 
     private AuthenticationSimple() {
-        super ();
+        super();
     }
 
-    private AuthenticationSimple (ArrayList<User> users) {
-        this.users = users;
-    }
-
-    public static Authentication getInstance () {
+    /*
+     * Implementatie van getInstance die nodig is om het Singleton Pattern toe te passen.
+     */
+    protected static Authentication getNewInstance() {
 
         if (singleton == null) {
-            singleton = new AuthenticationSimple ();
-        }
-        else if (singleton.getClass () != AuthenticationSimple.class) {
-            ArrayList<User> users = singleton.users;
-            singleton = new AuthenticationSimple (users);
+            singleton = new AuthenticationSimple();
         }
 
         return singleton;
     }
 
-    public User getAuthenticatedUser () {
-        return getActiveUser ();
+    /*
+     * Het aanmaken van een eventuele singleton verloopt via Authentication.
+     */
+    public static Authentication getInstance() {
+        return getInstance(AuthenticationSimple.class);
     }
 
-    private boolean authenticate () {
+    /*
+     * De ingelogde gebruiker wordt opgezocht (als die er is).
+     */
+    @Override
+    protected User getAuthenticatedUser() {
+        return getActiveUser();
+    }
+
+    /*
+     * Als er nog geen gebruiker is ingelogd, kan een nieuwe gebruiker inloggen (bij eenvoudige authenticatie is het
+     * voldoende dat een gebruiker daarvoor zijn gebruikersnaam verstrekt.
+     */
+    @Override
+    protected boolean authenticate() {
 
         for (int i = 0; i < 3; i++) {
 
-            User user = getUser (readUserName ());
+            String userName = readUserName ();
+            User user = getUser (userName);
 
             if (user != null) {
-                user.setActive();
+                user.setActive ();
                 return true;
             }
             else {
                 printMessage ("Unknown user. " + (2 - i) + " attempts left.");
+                Logging.getInstance ().printLog (String.format ("Unknown user for user '%s'", userName));
             }
         }
 
         return false;
     }
 
-    public boolean userIsAuthenticated () {
+    /*
+     * Een gebruiker kan direct (zonder toetsenbord) worden ingelegd met gebruikersnaam en password.
+     */
+    @Override
+    protected boolean authenticate (User user, String... password) {
 
-        if (getAuthenticatedUser () != null) {
-            return true;
-        }
-        else {
-            return authenticate ();
-        }
-    }
+        user.setActive ();
 
-    public boolean authenticate (String userName, String... password) {
-
-        User user = getAuthenticatedUser ();
-
-        if ((user != null) && (user.getUserName ().equals (userName))) {
-            return true;
+        // Hoewel een password bij eenvoudige authenticatie overbodig is, wordt een eventueel verstrekt password wel
+        // gebruikt om een gebruiker in te loggen (er wordt alleen niet gecontroleerd of dat is gelukt.
+        if (password.length == 1) {
+            user.authenticate (password [0]);
         }
 
-        user = getUser (userName);
-
-        if (user == null) {
-            return false;
-        }
-        else {
-
-            logout ();
-            user.setActive();
-
-            if (password.length == 1) {
-                user.authenticate (password [0]);
-            }
-
-            return true;
-        }
+        return true;
     }
 }

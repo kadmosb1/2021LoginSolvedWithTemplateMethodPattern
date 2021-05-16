@@ -71,4 +71,20 @@ public class Logging {
             e.printStackTrace ();
         }
     }
+
+    public void printLog (Exception e) {
+
+        StackTraceElement [] elements = e.getStackTrace ();
+        StringBuilder message = new StringBuilder ();
+        message.append (e.getMessage ());
+
+        for (StackTraceElement element : elements) {
+            message.append ("\r\n");
+            message.append (element.toString ());
+        }
+
+        if (!message.toString ().contains ("Logging")) {
+            printLog (message.toString ());
+        }
+    }
 }
